@@ -1,0 +1,22 @@
+(ns clojure.examples.hello
+    (:gen-class))
+ 
+ ;; This program displays Hello World
+ (defn Example []
+    (def x 1)
+    (def y 1.25)
+    (def str1 "Hello")
+    (println x)
+    (println y)
+    (println str1))
+ (Example)
+ 
+ 
+ clojure.examples.hello
+ 
+ (ns clojure.examples.hello
+    (:gen-class))
+ (defn Example []
+    (println (str "Hello World"))
+    (println (+ 1 2)))
+ (Example)
