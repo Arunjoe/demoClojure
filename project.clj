@@ -5,7 +5,9 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [lt.tokenmill/timewords "0.5.0"]
-                 [com.novemberain/monger "3.1.0"]]
+                 [com.novemberain/monger "3.1.0"]
+                 [io.pedestal/pedestal.service "0.5.9"]
+                 [clj-pdf "2.5.8"]]
   :main ^:skip-aot demoapp.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all

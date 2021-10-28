@@ -1,7 +1,11 @@
 (ns demoapp.core
  (:require  [monger.core :as mg]
             [monger.collection :as mc]
-            [monger.conversion :refer [from-db-object]])
+            ;; [monger.conversion :refer [from-db-object]]
+            ;; [io.pedestal.http :as http]
+            [clj-pdf.core :as pdf]
+            )
+  ;; (:use clj-pdf.core :refer pdf)
 (:import org.bson.types.ObjectId))
 
 
@@ -241,7 +245,56 @@
 (println matching_name)
   )
 )
+
+(defn db []
+  (def conn (mg/connect))
+  (def db (mg/get-db conn "usersdb"))
+  (def coll "users"))
 ;;----------------------------------------
+(defn db_checker []
+  (db)
+  (def db_dump (mc/find-maps db coll))
+  (println db_dump)
+  (println type (db_dump)))
+
+;;----------------------------------------
+(defn json_check []
+  (db)
+  (def dz `[{:a 2, :b 3, :c 4} {:a 5, :b 6, :c 7}])
+  ;; (def js(http/json-response da))
+  (def da (mc/find-maps db coll))
+  (println da)
+  (println "---------------got data------------------")
+  ;; (println  da)
+  (println  dz)
+  (def da_vec (vec da))
+  (println da_vec)
+  (println "-----"))
+;;----------------------------------------
+(defn export_pdf[]
+  (let [name "John"
+        id 24578
+        number 98745872
+        address "Bangalore, IN"]
+(pdf/pdf
+  [{}
+   [:list {:symbol "-"}
+    [:chunk {:style :bold} (str "Name:" name)]
+    (str "User Id:" id)
+    (str "Number:" number)]
+   [:paragraph address]
+   [:line]
+   [:paragraph (str name " is working as Associate Software Developer since 2018")]
+   [:paragraph "He has 6+ years of experience in web technologies including js, angular, php, and .NET"]]
+  "./resources/docJohn.pdf")    
+    ))
+
+
+;;----------------------------------------
+
+;;----------------------------------------
+
+
 
 
 (defn -main [& args]
@@ -270,7 +323,17 @@
 ;; (mongodb)
 ;; (mongoupdate)
 ;; (deleting_from_db)
-(db_query)
+;; (db_query)
+  ;; (db_checker)
+  ;; (json_check)
+  ;; (pdf-table
+  ;; [10 20 15]
+  ;; ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
+  ;; ["foo" "foo" "foo"]
+  ;; ["foo" "foo" "foo"])
+  (export_pdf)
+  
+  
 
   (println "----------------------------Execution Completed----------------------------"))
 
