@@ -4,6 +4,9 @@
             ;; [monger.conversion :refer [from-db-object]]
             ;; [io.pedestal.http :as http]
             [clj-pdf.core :as pdf]
+            
+            [demoapp.jsontocsv :as j2csv]
+            [demoapp.csvtojson :as csv2j]
             )
   ;; (:use clj-pdf.core :refer pdf)
 (:import org.bson.types.ObjectId))
@@ -74,7 +77,8 @@
       (def shipping 0)
       (def discount 0.1)
       (def price (- check (* check discount)))
-      (println "Total amount to be paid is " price))
+      (println "Total amount to be paid is " price)
+      )
     (do
       (println "Cost : " check)
       (println "Your total cost is less than 500")
@@ -291,6 +295,15 @@
 
 
 ;;----------------------------------------
+(defn csv_to_json[]
+  )
+;;----------------------------------------
+
+;;----------------------------------------
+
+;;----------------------------------------
+
+;;----------------------------------------
 
 ;;----------------------------------------
 
@@ -307,7 +320,7 @@
 ;; (switch_case "nginx")
 ;; (switch_case "no_data")
 ;; (if_do 2000)
-;; (cond_evaluation 23)
+;; (cond_evaluation 13)
 ;; (anon_fn)
 ;; (let_keyword "myLowerCaseLetters")
 ;; (while_loop 15)
@@ -326,26 +339,12 @@
 ;; (db_query)
   ;; (db_checker)
   ;; (json_check)
-  ;; (pdf-table
-  ;; [10 20 15]
-  ;; ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
-  ;; ["foo" "foo" "foo"]
-  ;; ["foo" "foo" "foo"])
-  (export_pdf)
-  
-  
+
+  ;; (export_pdf)
+  (j2csv/json_to_csv "./resources/aws.json" "./resources/aws0945.csv" "user.id,user.name,loc,post")
+  ;; (csv2j/csv_to_json "./resources/students.csv" "./resources/studt.json" "1:student.name:str,2:student.id:int,3:student:address:str,7:student.contact:str,4:firm.name:str,5:firm.ctc:float,6:firm.location:str")
+
+
 
   (println "----------------------------Execution Completed----------------------------"))
-
-
-
-
-
-;; ------------Delete no such document------------- 
-;;  #object[com.mongodb.WriteResult 0x7e053511 WriteResult{, n=0, updateOfExisting=false, upsertedId=null}]
-;; ----------------------------Execution Completed----------------------------
-
-;; ------------Delete Success------------- 
-;;  #object[com.mongodb.WriteResult 0x7e053511 WriteResult{, n=1, updateOfExisting=false, upsertedId=null}]
-;; ----------------------------Execution Completed----------------------------
 

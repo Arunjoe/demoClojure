@@ -1,0 +1,86 @@
+(ns demoapp.csvtojson
+  (:require [clojure.string    :as string]
+           [clojure.java.io   :as io]
+           [clojure.data.csv  :as csv]
+           [clojure.data.json :as json]))
+
+(defn ^long make-num
+  [input]
+  (cond
+    (integer? input) input
+    (empty?   input) 0
+    (string?  input) (Long/parseLong (clojure.string/trim input))
+    :else            0))
+
+(defn ^double make-double
+  [input]
+  (cond
+    (integer? input) input
+    (empty?   input) 0.0
+    (string?  input) (Double/parseDouble (clojure.string/trim input))
+    :else            0.0))
+
+(defn ^boolean make-bool
+  [input]
+  (boolean (Boolean/valueOf (clojure.string/trim input))))
+
+(defn type-fn-fn
+  [type-key]
+  (cond 
+    (or (= type-key "int") (= type-key "long"))  make-num
+    (or (= type-key "bool") (= type-key "boolean")) make-bool
+    (or (= type-key "float") (= type-key "double")) make-double
+    :else str))
+
+(def type-fn
+  (memoize type-fn-fn))
+
+(defn extract-key
+  [path]
+  (string/split path #"\."))
+
+(defn mappings-fn
+  [config-paths]
+  (map #(assoc-in % [:key-path] (extract-key (:key-path %)))
+    (map #(update-in % [:col] dec)
+      (map #(update-in % [:col] make-num)
+        (map #(zipmap [:col :key-path :type] %)
+          (map #(string/split % #":")
+                (string/split (string/trim config-paths) #",")))))))
+
+(def mappings
+  (memoize mappings-fn))
+
+(defn add-cell
+  [curr-map input-row cell-mapping]
+  (assoc-in curr-map
+            (:key-path cell-mapping)
+            ((type-fn (:type cell-mapping))
+                        (nth input-row (:col cell-mapping) nil))))
+
+(defn map-row
+  [input-row row-mappings]
+  (let [len (count row-mappings)]
+    (loop [curr   0
+           result {}]
+      (if (>= curr len) result
+        (recur
+          (inc curr)
+          (add-cell result input-row (nth row-mappings curr)))))))
+
+(defn csv2json
+  "Run CSV to JSON transformation"
+  [input output json-paths & [s]]
+  (let [s (or s "c")
+        s (if (= s "c") (char 44) (char 9))]
+    (do
+      (with-open [rdr (io/reader input)]
+        (with-open [wtr (io/writer output :append true)]
+          (doseq [line (line-seq rdr)]
+            (let [json-map (first (csv/read-csv line :separator s))
+                  mapped-row (map-row json-map (mappings json-paths))]
+              (.write wtr (str (json/write-str mapped-row) "\n")))))))))
+
+(defn csv_to_json
+  [input output json-paths & [s]]
+  (time (csv2json input output json-paths s)))
