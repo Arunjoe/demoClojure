@@ -1,0 +1,8 @@
+This is my sample text file
+Hello world
+Good MorningA new line added
+A new string added on new line
+delete this line please
+helloworld
+This is added from clojure
+Last line added

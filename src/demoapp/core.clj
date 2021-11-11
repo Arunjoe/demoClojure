@@ -4,6 +4,9 @@
             ;; [monger.conversion :refer [from-db-object]]
             ;; [io.pedestal.http :as http]
             [clj-pdf.core :as pdf]
+            [clojure.tools.logging :as log]
+            [clojure.java.io :as io]
+            [clojure.string :as cljs]
             
             [demoapp.jsontocsv :as j2csv]
             [demoapp.csvtojson :as csv2j]
@@ -262,6 +265,68 @@
   (println type (db_dump)))
 
 ;;----------------------------------------
+(defn text_file []
+  (def string1 (slurp "resources/Sample.txt"))
+   (println string1)
+  (println (type string1))
+  )
+
+;;----------------------------------------
+
+(defn text-line-by-line[]
+  (with-open [rdr (io/reader "resources/Sample.txt")]
+  ;;  (reduce conj [] (line-seq rdr))))
+;; (println (line-seq rdr))))
+(count (line-seq rdr))))
+
+
+;;----------------------------------------
+(defn write-to-text-file[]
+  (spit "resources/Sample.txt"
+      ;; "A new conent added" :append true))
+        "\n A new string added on new line" :append true))
+;;----------------------------------------
+(defn write-to-file-line-by-line[]
+  (with-open [w (io/writer "resources/Sample.txt" :append true)]
+      (.write w (str "\nhello" "world"))
+    (println "added a line")
+    (.write w "\nThis is added from clojure")
+    (println "line b added")
+    (.write w "\nLast line added")))
+
+
+;;----------------------------------------
+;; (defn file-to-array []
+;;   (def file_dump (slurp "resources/Sample.txt"))
+;;   (def file_splited (cljs/split file_dump #"\n"))
+;;   ;; (println file_splited)
+;;   (println "-----+++++++++-----")
+;;   (println (second file_splited))
+;;   (doseq [my_line file_splited]
+;;     (println ">>>" my_line))
+;;   ;; (println (type file_splited))
+;;   )
+
+;;----------------------------------------
+(defn delete-a-line []
+  (def line_to_delete "helloworld")
+  (println "--File read---")
+  (def file_dump (slurp "resources/Sample.txt")) ;;reading from file using slurp method
+  (def file_splited (cljs/split file_dump #"\n")) ;;each line is splited to vector items with new-line "\n"
+  (with-open [w (io/writer "resources/Sample.txt")] ;;opening the same file for writing
+    (doseq [my_line file_splited] ;;looping through the vector of lines
+      (if (not= my_line line_to_delete) ;;condition
+        (.write w (str my_line "\n")) ;;writing to file. to update the line, include modifiction functions with do block
+        (println "deleting" my_line))))
+  (println "writing completed"))
+
+
+;;----------------------------------------
+
+;;----------------------------------------
+
+;;----------------------------------------
+
 (defn json_check []
   (db)
   (def dz `[{:a 2, :b 3, :c 4} {:a 5, :b 6, :c 7}])
@@ -299,11 +364,33 @@
   )
 ;;----------------------------------------
 
+(defmacro with-try-catch
+  [& body]
+  `(try
+     ~@body
+    ;;  (catch Throwable t# '(log/error t#))  ;; logs the error
+    ;;  (catch Exception t# (println (str "caught exception: " (.toString t#)))) ;;catches the exception only
+     (catch Throwable t# (println (str "caught exception: " (.toString t#))))  ;;catches 
+     ))
+;;----------------------------------------
+(defn exception_macro
+  [c]
+  (with-try-catch
+    (dosync
+     (let [x (Integer/parseInt c)]
+       (println "Parsed Number is" x)
+       (println (/ 10 x))
+       (println "Completed without any excpetions")))))
 ;;----------------------------------------
 
+(defn nested_let []
+  (let [a 10
+        b 20]
+    (def junk_var 12)
+    (let [res (+ a b)]
+      (println "result is" res a b))))
 ;;----------------------------------------
 
-;;----------------------------------------
 
 ;;----------------------------------------
 
@@ -339,11 +426,20 @@
 ;; (db_query)
   ;; (db_checker)
   ;; (json_check)
-
+;; (text_file)
+;; (let [x (text-line-by-line)] (println x))
+;; (write-to-text-file)
+;; (write-to-file-line-by-line)
+  ;; (file-delete)
+  ;; (file-to-array)
+  (delete-a-line)
+  
   ;; (export_pdf)
-  (j2csv/json_to_csv "./resources/aws.json" "./resources/aws0945.csv" "user.id,user.name,loc,post")
+  ;; (j2csv/json_to_csv "./resources/aws.json" "./resources/aws0945.csv" "user.id,user.name,loc,post")
   ;; (csv2j/csv_to_json "./resources/students.csv" "./resources/studt.json" "1:student.name:str,2:student.id:int,3:student:address:str,7:student.contact:str,4:firm.name:str,5:firm.ctc:float,6:firm.location:str")
 
+  ;; (exception_macro "0")
+  ;; (nested_let)
 
 
   (println "----------------------------Execution Completed----------------------------"))
