@@ -14,7 +14,6 @@
   ;; (:use clj-pdf.core :refer pdf)
 (:import org.bson.types.ObjectId))
 
-
 ;;------------------
 ;; (defn round
 ;;    [d precision]
@@ -48,6 +47,9 @@
    (messenger "World! "))
   ([msg]
    (def x (str "My dear " msg))
+   (println x))
+    ([msg msg2]
+   (def x (str "My dear " msg "msg2" msg2))
    (println x)))
 
 ;;----------------------------------------
@@ -62,13 +64,20 @@
     (println "Eligilble for 20% discount")
     (println "Not eligible")))
 
+;; Nested if -----------------------------------------
+
+
+;;   ? :  :
 ;;----------------------------------------
 (defn switch_case [x]
   (case x
     "apache" (println "Contact Alice to install apache")
     "nginx" (println "Contact Bob to arrange nginx installation")
-    (println "You cannot install " x " software on this machine")))
+    (println "You cannot install " x " software on this machine")
+    (println "You cannon this machine"))
+    )
 
+;; multiple default condition 
 ;;----------------------------------------
 
 (defn if_do [check]
@@ -80,8 +89,7 @@
       (def shipping 0)
       (def discount 0.1)
       (def price (- check (* check discount)))
-      (println "Total amount to be paid is " price)
-      )
+      (println "Total amount to be paid is " price))
     (do
       (println "Cost : " check)
       (println "Your total cost is less than 500")
@@ -90,6 +98,15 @@
       (def price (+ check shipping))
       (println "Total amount to be paid is" price))))
 ;;----------------------------------------
+
+(defn calculate
+  [operator x y]
+    (condp = operator
+      "mul" (* x y)
+      "add" (+ x y)))
+
+;;----------------------------------------
+
 (defn cond_evaluation [time]
   (print "Hi Alice, ")
   (cond
@@ -100,10 +117,10 @@
     :else (println "I don't know what time is this. Get some sleep")))
 
 ;;----------------------------------------
-(defn anon_fn [x]
+(defn anon_fn []
   (def square (fn [x] (* x x)))
-  (println (square 6))
-  (def area (fn [a b] (* 2 (+ a b))))
+    (def area (fn [a b] (* 2 (+ a b))))
+  (println (square (area 4 6)))
   (println (area 4 6)))
 
 ;;----------------------------------------
@@ -112,18 +129,25 @@
         b 5
         c (clojure.string/capitalize msg)
         d (clojure.string/blank? msg)]
-    (println a b c d)) ;; end of let scope
+    (println a b c d)
+    (if ()
+(let [a1 ""
+      a2 ""])
+      )
+    ) ;; end of let scope
       ;;(println c) ;throws an error
 ) ;; end of function
 
 ;;----------------------------------------
 (defn while_loop [limit]
-  (def x (atom 1))
+  (def x (atom 1))  ;; retain previous value ?? ref ?
   (while (< @x limit)
     (do
          ;; (println @x)
       (if_function @x)
-      (swap! x inc))))
+      (swap! x inc)))
+  ;;memoise =========================================
+  )
 ;;----------------------------------------
 (defn while_atom []
   (def length_of_list 5)
@@ -149,12 +173,16 @@
 (defn dotimes_loop [x] ;it does the auto increment by itself
   (dotimes [n x]
     (println n)))
+
+;;; with string length count . .
 ;;----------------------------------------
 (defn range_loop [x y z]
   (def odd_numbers (filter odd? (range 0 y)))
   (def test_list (range x y z))
   (println odd_numbers)
   (println test_list))
+
+;; diff between dotimes x range
 ;;----------------------------------------
 (defn test_functions []
   (def x (list 4 6 -8 7 -2 0 3 1 -9 -5 2.5 6.3 -7.8))
@@ -179,6 +207,8 @@
     (when (<= i 10)
       (println i "x" mul "=" (* i mul))
       (recur (inc i)))))
+
+;; ?? recur x loop
 ;;----------------------------------------
 (defn file_read_function []
 ;;    (def string1 (slurp "src\\demoapp\\Sample.txt"))
@@ -282,7 +312,7 @@
 
 ;;----------------------------------------
 (defn write-to-text-file[]
-  (spit "resources/Sample.txt"
+  (spit "resources/Sample.txt"   ;;file location // url path // browser file paths
       ;; "A new conent added" :append true))
         "\n A new string added on new line" :append true))
 ;;----------------------------------------
@@ -309,17 +339,18 @@
 
 ;;----------------------------------------
 (defn delete-a-line []
-  (def line_to_delete "helloworld")
-  (println "--File read---")
-  (def file_dump (slurp "resources/Sample.txt")) ;;reading from file using slurp method
-  (def file_splited (cljs/split file_dump #"\n")) ;;each line is splited to vector items with new-line "\n"
+  (def line_to_delete "helloworld")  ;;we need to delete the line which is "helloworld"
+  (def file_dump (slurp "resources/Sample.txt"));;reading from file using slurp method
+  (println "--File read---") 
+  (def file_splited (clojure.string/split file_dump #"\n")) ;;each line is splited to vector items with new-line "\n"
   (with-open [w (io/writer "resources/Sample.txt")] ;;opening the same file for writing
     (doseq [my_line file_splited] ;;looping through the vector of lines
       (if (not= my_line line_to_delete) ;;condition
         (.write w (str my_line "\n")) ;;writing to file. to update the line, include modifiction functions with do block
-        (println "deleting" my_line))))
+        (println "deleting" my_line)))) ;;add functions as required
   (println "writing completed"))
 
+;;substring 
 
 ;;----------------------------------------
 
@@ -400,14 +431,16 @@
 (defn -main [& args]
 ;; (normal_function)
 ;; (Function_with_argument "myArgument")
-;; (messenger "John")
+;; (messenger "John" "Alice")
+;;   (messenger "john" nil)
 ;; (messenger)
 ;; (if_function 10)
 ;; (nested_if 300 400)
 ;; (switch_case "nginx")
 ;; (switch_case "no_data")
-;; (if_do 2000)
+;;  (if_do 2000)
 ;; (cond_evaluation 13)
+  (time (calculate "mul" 2 3))
 ;; (anon_fn)
 ;; (let_keyword "myLowerCaseLetters")
 ;; (while_loop 15)
@@ -432,7 +465,7 @@
 ;; (write-to-file-line-by-line)
   ;; (file-delete)
   ;; (file-to-array)
-  (delete-a-line)
+  ;; (delete-a-line)
   
   ;; (export_pdf)
   ;; (j2csv/json_to_csv "./resources/aws.json" "./resources/aws0945.csv" "user.id,user.name,loc,post")
