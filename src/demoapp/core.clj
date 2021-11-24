@@ -10,6 +10,8 @@
             
             [demoapp.jsontocsv :as j2csv]
             [demoapp.csvtojson :as csv2j]
+            [demoapp.catsndogs :as cnd]
+            [demoapp.stringOperations :as stringOp]
             )
   ;; (:use clj-pdf.core :refer pdf)
 (:import org.bson.types.ObjectId))
@@ -78,6 +80,21 @@
     )
 
 ;; multiple default condition 
+
+(defn multiple_switches[x]
+  (println "you are requesting help with " x)
+  (let [person (atom nil)]
+   (case x
+     "react" (do (reset! person "John")(println "Refer react.com for help."))
+     "clojure" (do (reset! person "Maria")(println "Refer clojure.org for more information"))
+     "backend" (do (reset! person "Alice or Maria")(println "Refer clojure.org and java.com for learning materials"))
+     "clojurescript" (do (reset! person "Roy or Maria")(println "Refer clojurescript.org for examples"))
+     ("nodejs" "angular") (do (reset! person "Joe")(println "For Node JS or Angular refer company learning library"))
+    ;;  "angular" 
+     (do (reset! person "David")(println "This is a not dev related issue. IT team will support you"))
+     )
+    (println "contact" @person "for any assistance")))
+
 ;;----------------------------------------
 
 (defn if_do [check]
@@ -350,10 +367,34 @@
         (println "deleting" my_line)))) ;;add functions as required
   (println "writing completed"))
 
-;;substring 
+;;--------------
+(defn delete-a-word []
+  (def line_to_delete "python")  ;;
+  (def replacement "clojure")
+  (def file_dump (slurp "resources/badfile.txt"));;reading from file using slurp method
+  (println "--File read---") 
+  (def file_splited (clojure.string/split file_dump #"\n")) ;;each line is splited to vector items with new-line "\n"
+  (with-open [w (io/writer "resources/corrected.txt")] ;;opening the same file for writing
+    (doseq [my_line file_splited] ;;looping through the vector of lines
+      (if (clojure.string/includes? my_line line_to_delete) ;;condition
+        (.write w (str (clojure.string/replace my_line line_to_delete replacement) "\n")) ;;writing to file. to update the line, include modifiction functions with do block
+        (.write w (str my_line "\n"))))) ;;add functions as required
+  (println "writing completed"))
 
 ;;----------------------------------------
 
+;;substring 
+(defn blacklist[raw_string]
+  (def blacklist_characters #"[!@#$%^&*('/)<>;:{}]")
+  (let [sanitized_string (clojure.string/replace raw_string blacklist_characters "")]
+    (println "input string: \t \t" raw_string)
+    (println "sanitized string: \t"sanitized_string))
+(def numberss #"[1234567]")  
+  (println (clojure.string/includes? raw_string "4"))
+  )
+;----------------------------------------
+(defn print-nums-only [s]
+(re-seq #"(?i)[1234567890]" s))
 ;;----------------------------------------
 
 ;;----------------------------------------
@@ -421,7 +462,32 @@
     (let [res (+ a b)]
       (println "result is" res a b))))
 ;;----------------------------------------
+(defn my-memoize-fn[a p]
+  (-> (reduce * (repeat p a))
+      (println)))
 
+(defn demo_memoize[]
+  (def memoized-fn (memoize my-memoize-fn))
+  (time (memoized-fn 4 25))
+  (println "Big calculation is done")
+  (time (memoized-fn 4 25))
+  (println "some more oprtations done")
+  (println "Memoized function call: ")
+  (time (memoized-fn 4 25))
+  (println "Non-Memoized funtion call: ")
+  (time (my-memoize-fn 4 25))
+  )
+
+;;----------------------------------------
+(defn copy-file [source-path dest-path]
+  (io/copy (io/file source-path) (io/file dest-path)))
+(defn file-copier[]
+  (copy-file "/resources/Sample.txt" "/resources/copied_sample.txt"))
+;;----------------------------------------
+
+;;----------------------------------------
+
+;;----------------------------------------
 
 ;;----------------------------------------
 
@@ -438,9 +504,10 @@
 ;; (nested_if 300 400)
 ;; (switch_case "nginx")
 ;; (switch_case "no_data")
+  ;; (multiple_switches "angular")
 ;;  (if_do 2000)
 ;; (cond_evaluation 13)
-  (time (calculate "mul" 2 3))
+  ;; (time (calculate "mul" 2 3))
 ;; (anon_fn)
 ;; (let_keyword "myLowerCaseLetters")
 ;; (while_loop 15)
@@ -466,14 +533,22 @@
   ;; (file-delete)
   ;; (file-to-array)
   ;; (delete-a-line)
-  
+  ;; (delete-a-word)
+  ;; (clojure.set/subset? )
+
   ;; (export_pdf)
   ;; (j2csv/json_to_csv "./resources/aws.json" "./resources/aws0945.csv" "user.id,user.name,loc,post")
   ;; (csv2j/csv_to_json "./resources/students.csv" "./resources/studt.json" "1:student.name:str,2:student.id:int,3:student:address:str,7:student.contact:str,4:firm.name:str,5:firm.ctc:float,6:firm.location:str")
 
   ;; (exception_macro "0")
   ;; (nested_let)
+  ;; (demo_memoize)
+  ;; (file-copier)
+  ;; (blacklist "<script>This is a hack initilizing at 12.30 (alert('Hacked'))</script>")
+  ;; (println (print-nums-only "the annual turnover of big4 is above 245.3685 billion dollars in the year 2019"))
 
+  ;; (cnd/catsdogs "I joined at tata as cyber security engineer" "cat" "ZQ" "dog" "cry" "data" "circuit")
+(stringOp/string_file_op)
 
   (println "----------------------------Execution Completed----------------------------"))
 

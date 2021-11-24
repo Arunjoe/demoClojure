@@ -6,3 +6,48 @@ delete this line please
 helloworld
 This is added from clojure
 Last line added
+
+
+What i missed:
+copy text file to another text file
+image downloader (from web)
+delete file
+merge ?
+
+
+
+entirely new::
+interpose 
+string match for whitelisting or blacklisting
+copy paste without overwriting
+reduce ? vector parse
+validate json file
+xml to json and edn and vice versa
+struct-map
+hashmap
+enum
+
+myOwn::::
+
+reduce
+repeat
+exp
+
+
+
+:: Problem
+Sample Input
+Sentence: “It’s raining cats and dogs”
+Words: cats dogs cogs training sit rain
+Sample Output
+cats dogs training
+Write a function that takes the following parameters:
+A string (sentence)
+A list/array of strings (words)
+The function should return all of the words from the second parameter (words) that can be 
+composed using the *characters* from the first parameter.
+The only restriction is that once a character from the sentence has been used, it cannot be used again.
+
+(def a "ab dsalnc hjaas asnajnsfj ")
+(def b (apply merge-with + (map #(hash-map % 1) (seq a ))))
+(prn b)
