@@ -547,8 +547,8 @@
   ;; (blacklist "<script>This is a hack initilizing at 12.30 (alert('Hacked'))</script>")
   ;; (println (print-nums-only "the annual turnover of big4 is above 245.3685 billion dollars in the year 2019"))
 
-  ;; (cnd/catsdogs "I joined at tata as cyber security engineer" "cat" "ZQ" "dog" "cry" "data" "circuit")
-(stringOp/string_file_op)
+  (cnd/catsdogs "I joined at tata as cyber security engineer" "cat" "ZQ" "dog" "cry" "data" "circuit")
+;; (stringOp/string_file_op)
 
   (println "----------------------------Execution Completed----------------------------"))
 
